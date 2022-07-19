@@ -5,20 +5,44 @@ const path = require('path');
 
 module.exports = router;
 
-var stocks = [
-    { id: 1, sname: "HCL", price: 500
-    },
-    { id: 2, sname: "Infosys", price: 1000
-    },
-    { id: 3, sname: "TCS", price: 1500
-    },
-    { id: 4, sname: "IBM", price: 2000
-    }
-]
+var mysql = require('mysql');
+const connect = require("mongodb");
+var con = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "password",
+    database: "Stocks"
+});
+
+con.connect(function (err) {
+    if (err) throw err;
+    console.log("Connected!!!")
+})
+
+var stocks
 
 router.get("/createstock",function(req,res){
     res.sendFile(__dirname+'/addstock.html')
+
 })
+
+function addstock(data){
+    var sqlquery = ` insert into stocklist(id, sname, price) values(${data.id}, "${data.sname}", ${data.price}) `
+    con.query(sqlquery,function(err,result){
+        if (err) throw err;
+        console.log("Total Number of Rows inserted||| "+result.affectedRows)
+    })
+}
+
+function getstocklist(){
+    var sqlquery = "select * from stocklist;"
+    con.query(sqlquery, function(err, result){
+        if(err) throw err;
+        stocks = result;
+    })
+}
+
+getstocklist();
 
 router.get("/buysell",function(req,res){
     res.sendFile(__dirname+'/index.html')
@@ -31,12 +55,14 @@ router.get("/getallstocks", function (req, res) {
 
 router.post("/addnewstock/", function (req, res) {
     // res.sendFile(path.join(__dirname, '/index.html'));
-    var newId = stocks[stocks.length - 1].id + 1;
-    stocks.push({
-        id: newId,
+    // var newId = stocks[stocks.length - 1].id + 1;
+    // stocks.push();
+    addstock({
+        id: req.body.id,
         sname: req.body.sname,
         price: req.body.price
     });
+    getstocklist();
     res.json({ message: " New Stock details uploaded..." })
 })
 

@@ -12,20 +12,50 @@
 
     <form action="">
         <label for="sname">Name:</label><br>
-        <input type="form-control" list="stocks" id="sname" name="sname"><br>
-        <datalist id="stocks">
-            <option value="HCL">
-            <option value="Infosys">
-            <option value="TCS">
-            <option value="IBM">
-        </datalist>
+        <div id="stockdropdown"></div>
         <label for="quantity">Quantity:</label><br>
         <input type="number" id="quantity" name="quantity"><br><br>
         <input type="submit" value="Buy">
     </form>
+    <p id="price"></p>
+    
+    <script>
 
 
+        function myFunction(stock) {
+            document.getElementById("price").innerHTML = stock.price;
+        }
 
+        async function fetchStocks() {
+            var stockname = document.createElement("select");
+            // var price = document.createElement("select");
+            stockname.id = "sname";
+            stockname.name = "sname";
+
+            
+            await fetch("http://127.0.0.1:3000/getallstocks/")
+            .then(response => { return response.json() })
+            .then(data => {
+                data.forEach(stock => {
+                    myFunction(stock)
+                    stockname.appendChild(new Option(stock.sname, stock.id));
+                    // places_from.appendChild(new Option(station.id,station.place));
+                });
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+            // stockname.onchange(myFunction(stockname))
+            document.getElementById("stockdropdown").appendChild(stockname);
+        }
+
+        
+        
+        window.onload = function() {
+            fetchStocks();
+        }
+
+    </script>
 
 </body>
 
