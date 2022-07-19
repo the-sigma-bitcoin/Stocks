@@ -1,0 +1,2 @@
+# Stocks
+Stock trading platform
