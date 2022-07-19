@@ -53,6 +53,20 @@ router.get("/getallstocks", function (req, res) {
     console.log(stocks)
 })
 
+router.get("/getstockbyid/:id([0-9]{1,})", function (req, res) {
+    // console.log(req.params.id);
+    // var sqlquery = ` select * from stocklist where id = ${req.params.id}; `;
+    var data;
+    data = stocks.filter((s) => {if(s.id==req.params.id)return true;});
+    // con.query(sqlquery, function(err, result){
+    //     if(err) throw err;
+    //     data = result;
+    // })
+
+    res.json(data[0]);
+    console.log(data);
+})
+
 router.post("/addnewstock/", function (req, res) {
     // res.sendFile(path.join(__dirname, '/index.html'));
     // var newId = stocks[stocks.length - 1].id + 1;
@@ -65,6 +79,8 @@ router.post("/addnewstock/", function (req, res) {
     getstocklist();
     res.json({ message: " New Stock details uploaded..." })
 })
+
+// router.get("/")
 
 router.get("/:id([0-9]{1,})", function (req, res) {
     console.log("Testing")

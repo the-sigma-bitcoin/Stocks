@@ -14,49 +14,62 @@
         <label for="sname">Name:</label><br>
         <div id="stockdropdown"></div>
         <label for="quantity">Quantity:</label><br>
-        <input type="number" id="quantity" name="quantity"><br><br>
-        <input type="submit" value="Buy">
+        <input type="number" id="quantity" name="quantity" onchange="displayprice()"><br><br>
+        <input type="submit" value="Buy" onclick="displaypnl()">
     </form>
     <p id="price"></p>
-    
+
     <script>
 
+        function displaypnl() {
+            const targetDiv = document.getElementById("pnlcalc");
+            if (targetDiv.style.display == "none") {
+                targetDiv.style.display = "block";
+            }
+        }
 
-        function myFunction(stock) {
-            document.getElementById("price").innerHTML = stock.price;
+        function myFunction(price) {
+            document.getElementById("price").innerHTML = price;
         }
 
         async function fetchStocks() {
             var stockname = document.createElement("select");
-            // var price = document.createElement("select");
             stockname.id = "sname";
             stockname.name = "sname";
-
-            
             await fetch("http://127.0.0.1:3000/getallstocks/")
-            .then(response => { return response.json() })
-            .then(data => {
-                data.forEach(stock => {
-                    myFunction(stock)
-                    stockname.appendChild(new Option(stock.sname, stock.id));
-                    // places_from.appendChild(new Option(station.id,station.place));
+                .then(response => { return response.json() })
+                .then(data => {
+                    data.forEach(stock => {
+                        // myFunction(stock)
+                        // console.log(stock.sname)
+                        // let option = ` <option id = "${stock.id}">  ${stock.sname} </option> `
+                        // html+=option;
+                        stockname.appendChild(new Option(stock.sname, stock.id));
+                    });
+                })
+                .catch(function (error) {
+                    console.log(error);
                 });
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-            // stockname.onchange(myFunction(stockname))
+            // console.log(stockname);
             document.getElementById("stockdropdown").appendChild(stockname);
+            stockname.addEventListener(
+                'change',
+                function () {
+
+                },
+            );
+            console.log(document.getElementById("stockdropdown").value);
+            // stockname.onchange() = myFunction(stockname.price);
         }
 
-        
-        
-        window.onload = function() {
+        window.onload = function () {
             fetchStocks();
+        }
+        function displayprice() {
+            console.log(document.getElementById("stockdropdown").value);
         }
 
     </script>
 
 </body>
-
 </html>
